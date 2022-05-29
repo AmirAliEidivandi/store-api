@@ -1,7 +1,3 @@
-const Parse = require("parse");
-
-Parse.initialize('cJA0Rp05NkV6OkcPpF2XlbMQzCeD2jIamTDb4Ml6', 'lA2G6ffiPRTpL73nB3hZGhf3O1ocsWfZhfMYlUyz')
-Parse.serverURL('https://parseapi.back4app.com/')
 require("dotenv").config();
 require("express-async-errors");
 
