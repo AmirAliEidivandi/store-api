@@ -23,6 +23,21 @@ const getAllProducts = async (req, res) => {
     res.status(200).json({ products, nbHits: products.length });
 };
 
+const getOneProduct = async (req, res) => {
+    try {
+        const { id: productId } = req.body.params;
+        const product = await Product.findById({ _id: productId });
+
+        if (!product) {
+            res.status(404).json({ error: "not found..." });
+        }
+
+        res.status(200).json({ product });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const createProduct = async (req, res) => {
     try {
         const product = await Product.create(req.body);
@@ -41,26 +56,31 @@ const deleteProduct = async (req, res) => {
         }
         res.status(200).json({ productId });
     } catch (error) {
-        res.status(404).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
 const updateProduct = async (req, res) => {
-    const { id: productId } = req.params;
-    const product = await Product.findOneAndUpdate({ _id: productId }, req.body, {
-        new: true,
-        runValidators: true,
-    });
+    try {
+        const { id: productId } = req.params;
+        const product = await Product.findOneAndUpdate({ _id: productId }, req.body, {
+            new: true,
+            runValidators: true,
+        });
 
-    if (!product) {
-        return res.status(404).json({ error: `no product with id: ${productId}` });
+        if (!product) {
+            return res.status(404).json({ error: `no product with id: ${productId}` });
+        }
+        res.status(200).json({ product });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-    res.status(200).json({ product });
 };
 
 module.exports = {
     getAllProducts,
     getAllProductsStatic,
+    getOneProduct,
     createProduct,
     deleteProduct,
     updateProduct,
