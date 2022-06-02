@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("express-async-errors");
 
+const cors = require("cors");
 const winston = require("winston");
 const express = require("express");
 const app = express();
@@ -14,6 +15,7 @@ const errorMiddleware = require("./middleware/error-handler");
 
 // middleware
 app.use(express.json());
+app.use(cors());
 
 // routes
 app.get("/", (req, res) => {
