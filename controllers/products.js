@@ -1,31 +1,39 @@
 const Product = require("../models/product");
 
 const getAllProductsStatic = async (req, res) => {
-    const products = await Product.find({}).sort("price").select("name price");
-    res.status(200).json({ products, nbHits: products.length });
+    try {
+        const products = await Product.find({}).sort("price").select("name price");
+        res.status(200).json({ products, nbHits: products.length });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 const getAllProducts = async (req, res) => {
-    const { featured, company, name } = req.query;
-    const queryObject = {};
+    try {
+        const { featured, company, name } = req.query;
+        const queryObject = {};
 
-    if (featured) {
-        queryObject.featured = featured === "true" ? true : false;
-    }
-    if (company) {
-        queryObject.company = company;
-    }
-    if (name) {
-        queryObject.name = name;
-    }
+        if (featured) {
+            queryObject.featured = featured === "true" ? true : false;
+        }
+        if (company) {
+            queryObject.company = company;
+        }
+        if (name) {
+            queryObject.name = name;
+        }
 
-    const products = await Product.find(queryObject);
-    res.status(200).json({ products, nbHits: products.length });
+        const products = await Product.find(queryObject);
+        res.status(200).json({ products, nbHits: products.length });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 const getOneProduct = async (req, res) => {
     try {
-        const { id: productId } = req.body.params;
+        const { id: productId } = req.params;
         const product = await Product.findById({ _id: productId });
 
         if (!product) {

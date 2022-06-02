@@ -1,5 +1,7 @@
 require("dotenv").config();
 require("express-async-errors");
+
+const winston = require("winston");
 const express = require("express");
 const app = express();
 
@@ -24,14 +26,26 @@ app.use("/api/v1/products", productsRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
+// create a logger
+const logger = winston.createLogger({
+    level: "info",
+    transports: [
+        new winston.transports.Console({
+            format: winston.format.combine(winston.format.colorize({ all: true })),
+        }),
+        new winston.transports.File({ filename: "error.log", level: "error" }),
+    ],
+    exceptionHandlers: [new winston.transports.File({ filename: "exceptions.log" })],
+});
+
 const PORT = process.env.PORT || 3000;
 const start = async () => {
     try {
         // connectDB
         await connectDB(process.env.MONGO_URI);
-        app.listen(PORT, () => console.log(`server running on port ${PORT}`));
+        app.listen(PORT, () => logger.info(`server running on port ${PORT}`));
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 };
 
